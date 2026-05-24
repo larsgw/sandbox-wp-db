@@ -40,10 +40,10 @@ jobs:
       - name: Get changed files
         id: changes
         env:
-          INPUT_ADDED_MODIFIED: ${{ inputs.added-modified }}
-          INPUT_COPIED: ${{ inputs.copied }}
-          INPUT_DELETED: ${{ inputs.deleted }}
-          INPUT_RENAMED: ${{ inputs.renamed }}
+          INPUT_ADDED_MODIFIED: "${{ inputs.added-modified }}"
+          INPUT_COPIED: "${{ inputs.copied }}"
+          INPUT_DELETED: "${{ inputs.deleted }}"
+          INPUT_RENAMED: "${{ inputs.renamed }}"
         # Set outputs using the command.
         run: |
           echo "GPML files were changed in pull request ${{ github.event.before }} -> ${{ github.event.after }}"
@@ -56,7 +56,7 @@ jobs:
 
           #echo "::set-output name=added-modified::$ADDED_MODIFIED"
           echo "added-modified=$ADDED_MODIFIED" >> $GITHUB_OUTPUT
-          if "$ADDED_MODIFIED"; then
+          if [ -z "$ADDED_MODIFIED" ]; then
             echo 'added or modified:'
             tr ' ' '\n' <<< "$ADDED_MODIFIED"
           fi
@@ -69,7 +69,7 @@ jobs:
 
           #echo "::set-output name=copied::$COPIED"
           echo "copied=$COPIED" >> $GITHUB_OUTPUT
-          if "$COPIED"; then
+          if [ -z "$COPIED" ]; then
             echo 'copied:'
             tr ' ' '\n' <<< "$COPIED"
           fi
@@ -82,7 +82,7 @@ jobs:
 
           #echo "::set-output name=deleted::$DELETED"
           echo "deleted=$DELETED" >> $GITHUB_OUTPUT
-          if "$DELETED"; then
+          if [ -z "$DELETED" ]; then
             echo 'deleted:'
             tr ' ' '\n' <<< "$DELETED"
           fi
@@ -95,11 +95,10 @@ jobs:
 
           #echo "::set-output name=renamed::$RENAMED"
           echo "renamed=$RENAMED" >> $GITHUB_OUTPUT
-          if "$RENAMED"; then
+          if [ -z "$RENAMED" ]; then
             echo 'renamed:'
             tr ' ' '\n' <<< "$RENAMED"
           fi
-          
   author-list:
     runs-on: ubuntu-latest
     needs: changed-gpmls
