@@ -48,54 +48,54 @@ jobs:
         run: |
           echo "GPML files were changed in pull request ${{ github.event.before }} -> ${{ github.event.after }}"
 
-          if [ -z "$INPUT_ADDED_MODIFIED" ]; then
-            ADDED_MODIFIED=$(sed -e 's/WP[0-9]\+/pathways\/\0\/\0.gpml/g')
+          if [ -n "$INPUT_ADDED_MODIFIED$INPUT_COPIED$INPUT_DELETED$INPUT_RENAMED" ]; then
+            ADDED_MODIFIED=$(sed -e 's/WP[0-9]\+/pathways\/\0\/\0.gpml/g' <<< "$INPUT_ADDED_MODIFIED")
           else
             ADDED_MODIFIED=$(git diff --name-only --diff-filter=AM ${{ github.event.before }} ${{ github.event.after }} | grep .gpml$ | xargs)
           fi
 
           #echo "::set-output name=added-modified::$ADDED_MODIFIED"
           echo "added-modified=$ADDED_MODIFIED" >> $GITHUB_OUTPUT
-          if [ -z "$ADDED_MODIFIED" ]; then
+          if [ -n "$ADDED_MODIFIED" ]; then
             echo 'added or modified:'
             tr ' ' '\n' <<< "$ADDED_MODIFIED"
           fi
 
-          if [ -z "$INPUT_COPIED" ]; then
-            COPIED=$(sed -e 's/WP[0-9]\+/pathways\/\0\/\0.gpml/g')
+          if [ -n "$INPUT_ADDED_MODIFIED$INPUT_COPIED$INPUT_DELETED$INPUT_RENAMED" ]; then
+            COPIED=$(sed -e 's/WP[0-9]\+/pathways\/\0\/\0.gpml/g' <<< "$INPUT_COPIED")
           else
             COPIED=$(git diff --name-only --diff-filter=C ${{ github.event.before }} ${{ github.event.after }} | grep .gpml$ | xargs)
           fi
 
           #echo "::set-output name=copied::$COPIED"
           echo "copied=$COPIED" >> $GITHUB_OUTPUT
-          if [ -z "$COPIED" ]; then
+          if [ -n "$COPIED" ]; then
             echo 'copied:'
             tr ' ' '\n' <<< "$COPIED"
           fi
 
-          if [ -z "$INPUT_DELETED" ]; then
-            DELETED=$(sed -e 's/WP[0-9]\+/pathways\/\0\/\0.gpml/g')
+          if [ -n "$INPUT_ADDED_MODIFIED$INPUT_COPIED$INPUT_DELETED$INPUT_RENAMED" ]; then
+            DELETED=$(sed -e 's/WP[0-9]\+/pathways\/\0\/\0.gpml/g' <<< "$INPUT_DELETED")
           else
             DELETED=$(git diff --name-only --diff-filter=D ${{ github.event.before }} ${{ github.event.after }} | grep .gpml$ | xargs)
           fi
 
           #echo "::set-output name=deleted::$DELETED"
           echo "deleted=$DELETED" >> $GITHUB_OUTPUT
-          if [ -z "$DELETED" ]; then
+          if [ -n "$DELETED" ]; then
             echo 'deleted:'
             tr ' ' '\n' <<< "$DELETED"
           fi
 
-          if [ -z "$INPUT_RENAMED" ]; then
-            RENAMED=$(sed -e 's/WP[0-9]\+/pathways\/\0\/\0.gpml/g')
+          if [ -n "$INPUT_ADDED_MODIFIED$INPUT_COPIED$INPUT_DELETED$INPUT_RENAMED" ]; then
+            RENAMED=$(sed -e 's/WP[0-9]\+/pathways\/\0\/\0.gpml/g' <<< "$INPUT_RENAMED")
           else
             RENAMED=$(git diff --name-only --diff-filter=R ${{ github.event.before }} ${{ github.event.after }} | grep .gpml$ | xargs)
           fi
 
           #echo "::set-output name=renamed::$RENAMED"
           echo "renamed=$RENAMED" >> $GITHUB_OUTPUT
-          if [ -z "$RENAMED" ]; then
+          if [ -n "$RENAMED" ]; then
             echo 'renamed:'
             tr ' ' '\n' <<< "$RENAMED"
           fi
